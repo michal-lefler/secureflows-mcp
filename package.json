@@ -1,5 +1,5 @@
 {
-  "name": "secureflows-mcp-server",
+  "name": "secureflows",
   "version": "0.2.0",
   "description": "MCP server that wraps secureFlows ai-safe APIs, plus token-free tools that help an agent scaffold a correct integration.",
   "license": "MIT",
@@ -26,11 +26,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/michal-lefler/secureflows-mcp-server.git"
+    "url": "https://github.com/michal-lefler/secureflows-mcp.git"
   },
   "homepage": "https://www.secure-flows.com",
   "bugs": {
-    "url": "https://github.com/michal-lefler/secureflows-mcp-server/issues"
+    "url": "https://github.com/michal-lefler/secureflows-mcp/issues"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

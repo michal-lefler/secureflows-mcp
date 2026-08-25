@@ -30,7 +30,7 @@ function readPackageVersion(): string {
   ]) {
     try {
       const pkg = JSON.parse(readFileSync(candidate, 'utf8')) as { name?: string; version?: string };
-      if (pkg.name === 'secureflows-mcp-server' && pkg.version) {
+      if (pkg.name === 'secureflows' && pkg.version) {
         return pkg.version;
       }
     } catch {
@@ -55,7 +55,7 @@ async function buildServerFactory() {
   const createToolServer = () => {
     const server = new McpServer(
       {
-        name: 'secureflows-mcp-server',
+        name: 'secureflows',
         version: SERVER_VERSION,
       },
       {

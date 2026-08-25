@@ -1,6 +1,6 @@
 # secureFlows MCP Server
 
-[![secureFlows](https://img.shields.io/badge/secureFlows-www.secure--flows.com-1a73e8)](https://www.secure-flows.com) [![CI](https://github.com/michal-lefler/secureflows-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/michal-lefler/secureflows-mcp-server/actions/workflows/ci.yml)
+[![secureFlows](https://img.shields.io/badge/secureFlows-www.secure--flows.com-1a73e8)](https://www.secure-flows.com) [![CI](https://github.com/michal-lefler/secureflows-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/michal-lefler/secureflows-mcp/actions/workflows/ci.yml)
 
 Cloud-deployable MCP server that wraps the [secureFlows](https://www.secure-flows.com) OpenAPI
 surface tagged `ai-safe` and `ai-optional`.
@@ -163,7 +163,7 @@ it's still scaffolding the integration — see **What it does** above.
 Shipped inside the web Docker image and proxied at `/mcp` on `www.secure-flows.com` / staging
 (see **For agents** above). No separate subdomain.
 
-The npm package `secureflows-mcp-server` is how CI publishes a versioned artifact (and how a
+The npm package `secureflows` is how CI publishes a versioned artifact (and how a
 standalone container can be built from `mcp-server/Dockerfile`); it is **not** the agent-facing
 setup path. Publish on `v*.*.*` tags via `.github/workflows/publish-secureflows-mcp-server.yml`.
 
