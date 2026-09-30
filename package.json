@@ -11,6 +11,8 @@
     "bin",
     "dist",
     "docs",
+    ".claude-plugin",
+    "skills",
     "README.md",
     "LICENSE"
   ],
@@ -36,7 +38,9 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch src/server.ts",
     "start": "node dist/src/server.js",
-    "test": "node --import tsx --test test/http-smoke.test.ts test/invoke-tool.test.ts test/json-schema.test.ts test/resilience.test.ts test/select-operations.test.ts test/static-tools.test.ts",
+    "test": "node --import tsx --test test/http-smoke.test.ts test/invoke-tool.test.ts test/json-schema.test.ts test/mirror-sync.test.ts test/plugin-distribution.test.ts test/resilience.test.ts test/security-review-prompt.test.ts test/select-operations.test.ts test/static-tools.test.ts",
+    "test:live": "node --import tsx --test test/hosted-endpoint.live.test.ts",
+    "generate:prompts": "node --import tsx scripts/generate-security-review.mjs",
     "prepack": "npm run build && node scripts/bundle-openapi.mjs"
   },
   "dependencies": {

@@ -1,0 +1,13 @@
+{
+  "name": "secureflows",
+  "displayName": "secureFlows",
+  "description": "Per-user encrypted database with tenant isolation, hosted login, and session/data TTLs — MCP tools plus integration guidance for wiring an app to secureFlows.",
+  "version": "0.3.0",
+  "author": { "name": "secureFlows", "url": "https://github.com/michal-lefler/secureflows-mcp" },
+  "homepage": "https://github.com/michal-lefler/secureflows-mcp",
+  "repository": "https://github.com/michal-lefler/secureflows-mcp.git",
+  "license": "MIT",
+  "keywords": ["secureflows", "mcp", "auth", "per-user-database", "tenant-isolation"],
+  "skills": ["./skills/secureflows-integration", "./skills/security-review"],
+  "mcpServers": "./.mcp.json"
+}

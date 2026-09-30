@@ -141,7 +141,9 @@ paths:
         `ADMIN` memberships (ignores `enableSelfService`). Same exclusions for soft-deleted, `SUPPORT`,
         and reserved support workspace.
 
-        Support allowlisted Firebase accounts receive **403** (use `POST /users/support/login`).
+        Support allowlisted Firebase accounts receive **403** (use `POST /users/support/login`
+        then `POST /users/support/select-workspace` — operator console flow; not a third-party
+        integration path).
 
         Pair with `POST /users/login` and `workspaceName` when the account belongs to more than one workspace.
       tags: [human-only]
@@ -563,6 +565,29 @@ paths:
                 name: demo-workspace
                 acceptAnonimous: false
                 enableSelfService: false
+
+  /api/v1/workspaces/reseller-code:
+    get:
+      summary: Get the caller's reseller referral code
+      description: |
+        Returns the reseller code this workspace was referred by (from `resellerCode` at
+        creation, or a pending referral attributed at sign-in), or `null` if none. Read-only —
+        informational only, not tied to commission eligibility. Caller must be **ADMIN**, **OWNER**,
+        or a support operator.
+      tags: [human-only]
+      security:
+        - userBearerAuth: []
+      responses:
+        "200":
+          description: Reseller code, or null.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResellerCodeResponse'
+              example:
+                code: acme-partners
+        "403":
+          description: USER token missing or not ADMIN/OWNER/SUPPORT
 
   /api/v1/workspaces/billing:
     get:
@@ -1887,6 +1912,7 @@ paths:
       summary: Revoke a session owned by the current user
       description: |
         Self-service dashboard endpoint. Revokes a session owned by the caller in the current workspace.
+        The session ends and its stored data is destroyed permanently; this is not sign-out.
         Requires workspace **`enableSelfService: true`**.
       security:
         - userBearerAuth: []
@@ -1923,10 +1949,13 @@ paths:
   /api/v1/sessions/revoke:
     post:
       tags: [ai-safe]
-      summary: Revoke the current session (by session token)
+      summary: Revoke the current session and destroy its data (by session token) - not sign-out
       description: |
-        Revokes the session referenced by the internal SESSION Bearer token. Useful for automation
-        clients that only hold a session token and want to revoke it cleanly.
+        Permanently revokes the session referenced by the internal SESSION Bearer token. The session
+        ends and everything stored in it is destroyed and cannot be restored. This is **not** sign-out:
+        to sign a user out and keep their data, use `POST /api/v1/auth/logout` (or, in a browser, the
+        redirect helper `GET /api/v1/auth/logout`). Call revoke only when the user or an admin
+        deliberately wants the session and its data deleted, for example on account deletion.
       security:
         - sessionBearerAuth: []
       responses:
@@ -2110,6 +2139,8 @@ paths:
     post:
       tags: [human-only]
       summary: Revoke any workspace session (admin/owner only)
+      description: |
+        Ends the session and permanently destroys its stored data. Audited as an admin revoke.
       security:
         - userBearerAuth: []
       parameters:
@@ -2425,6 +2456,21 @@ components:
           enum: [free, base, pro]
           description: Initial billing catalog plan. Defaults to **free** when omitted.
           example: free
+        resellerCode:
+          type: string
+          nullable: true
+          description: |
+            Optional reseller referral code (e.g. from a `?reseller=` link). An unknown or
+            invalid code is silently ignored — it never blocks workspace creation.
+
+    WorkspaceResellerCodeResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          nullable: true
+          description: The reseller code this workspace was referred by, or null if none.
+          example: acme-partners
 
     WorkspaceBillingUsage:
       type: object

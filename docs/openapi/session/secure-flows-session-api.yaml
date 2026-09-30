@@ -494,10 +494,13 @@ paths:
 
   /api/v1/sessions/revoke:
     post:
-      summary: Revoke the current session (by session token)
+      summary: Revoke the current session and destroy its data (by session token) - not sign-out
       description: >
-        Revokes the session referenced by the internal SESSION Bearer token. This endpoint is useful
-        for automation clients that only hold a session token and want to revoke it cleanly.
+        Permanently revokes the session referenced by the internal SESSION Bearer token. The session
+        ends and everything stored in it is destroyed and cannot be restored. This is NOT sign-out: to
+        sign a user out and keep their data, use POST /api/v1/auth/logout (or, in a browser, the
+        redirect helper GET /api/v1/auth/logout). Call revoke only when the user or an admin
+        deliberately wants the session and its data deleted, for example on account deletion.
       tags: [ai-safe]
       security:
         - sessionBearerAuth: []

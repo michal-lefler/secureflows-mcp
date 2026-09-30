@@ -1,0 +1,12 @@
+{
+  "name": "secureflows-marketplace",
+  "description": "Official secureFlows Claude Code plugins.",
+  "owner": { "name": "secureFlows" },
+  "plugins": [
+    {
+      "name": "secureflows",
+      "source": "./",
+      "description": "secureFlows MCP tools for wiring an app to a per-user encrypted database with tenant isolation and hosted login."
+    }
+  ]
+}

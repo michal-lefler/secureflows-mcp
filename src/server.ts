@@ -11,6 +11,7 @@ import type { Express, NextFunction, Request, Response } from 'express';
 import { loadConfig, type ServerConfig } from './config.js';
 import { loadSpecs } from './openapi/load-spec.js';
 import { installProcessGuards } from './process-guards.js';
+import { registerPrompts } from './prompts/security-review.js';
 import { buildGeneratedTools, registerGeneratedTools } from './tools/build-tools.js';
 import { registerStaticTools, STATIC_TOOL_COUNT } from './tools/static-tools.js';
 
@@ -67,6 +68,7 @@ async function buildServerFactory() {
 
     registerGeneratedTools(server, generatedTools);
     registerStaticTools(server);
+    registerPrompts(server);
 
     return server;
   };

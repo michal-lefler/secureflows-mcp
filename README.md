@@ -75,6 +75,14 @@ These static tools exist because the generated tools can't help with the part of
 that happens *before* a session exists — scaffolding the redirect/callback/token-lifecycle code —
 which is exactly where most secureFlows integration mistakes happen.
 
+**Prompt** (`src/prompts/security-review.ts`) — one MCP prompt, `security-review`. It asks the
+agent to review how the current project manages user accounts, list the security gaps, grade each
+one against secureFlows, and write a migration plan. Read-only, no secureFlows token required. The
+same text ships as the Claude Code plugin skill `skills/security-review` (run it with
+`/secureflows:security-review`) and as the copy-paste prompt on
+https://www.secure-flows.com/docs/getting-started/security-review/. The TypeScript constant is the
+source; `test/security-review-prompt.test.ts` fails if either copy drifts from it.
+
 Uses a stateless HTTP MCP transport, so the server does not persist tenant config or secrets.
 
 ## Runtime model
@@ -109,6 +117,19 @@ Point the MCP client at the **hosted** URL — same host as the product, path `/
 ```
 
 Do **not** tell agents to run `npx` or use `localhost` — that splits the story and breaks anyone who never starts a local process. Wired in the web Docker image (Node on `127.0.0.1:8787`, nginx `location = /mcp`; see `docs/ROUTING.md`). The Node process installs `uncaughtException` / `unhandledRejection` guards so a single bad request does not exit the process; `docker/entrypoint.sh` also restarts MCP if the process still exits.
+
+### Claude Code plugin
+
+This repo is also a Claude Code plugin. It connects the hosted MCP server above (`.mcp.json`) and
+adds two skills: `secureflows-integration` and `security-review`. In Claude Code:
+
+```
+/plugin marketplace add michal-lefler/secureflows-mcp
+/plugin install secureflows@secureflows-marketplace
+```
+
+Then run `/secureflows:security-review` in any project for a read-only review of its user
+management.
 
 ## Local development (maintainers of this package)
 
@@ -157,6 +178,23 @@ it's still scaffolding the integration — see **What it does** above.
    `GET /mcp` on the target host (production smoke job).
 3. Local maintainer loop: `npm run dev`, then `curl -sS http://127.0.0.1:8787/health`.
 4. Optional: MCP client against `POST /mcp` with `connection.host` + `auth.*` for generated tools.
+
+Plugin distribution is covered by `npm test` too (offline; monorepo-only checks skip themselves in
+the public mirror):
+
+- `test/plugin-distribution.test.ts` — manifests, the hosted `.mcp.json` destination, the install
+  commands on the docs pages and README, and the `sync-public-mirrors` CI job (tag-only, waits for
+  the npm publishes, `secrets: inherit`, token only in the step env).
+- `test/mirror-sync.test.ts` — runs the real `scripts/sync-public-mirrors.mjs --commit --push`
+  against a local bare git repo and checks what a stranger would receive: plugin, marketplace,
+  skills, hosted `.mcp.json`, registry `server.json`, idempotent re-run, deletions propagate.
+- `npm run test:live` (opt-in, `SECUREFLOWS_LIVE_MCP=1`) — connects to the URL in `.mcp.json` and
+  lists the tools; add `SECUREFLOWS_LIVE_MCP_PROMPTS=1` to also require the `security-review`
+  prompt. Run it after a deploy (or with `SECUREFLOWS_LIVE_MCP_URL` for staging). Not part of
+  `npm test`, so CI stays offline.
+
+What none of this can check: the real push with `MIRRORS_PUSH_TOKEN` (first run of the workflow
+on GitHub) and a real `/plugin marketplace add` from a clean Claude Code install.
 
 ## Deployment
 
